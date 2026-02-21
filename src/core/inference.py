@@ -3,7 +3,7 @@ from ultralytics.models import YOLO
 
 from src.config.config import InferenceConfig, ModelConfig
 from src.core.schemas import Detections
-from src.core.types import Frame
+from src.core.types import Frame, InferenceTask
 
 
 class InferenceEngine:
@@ -32,17 +32,19 @@ class InferenceEngine:
 			print(f"Error loading model '{model_path}': {e}")
 			raise
 
-	def predict(self, frame: Frame, infer_config: InferenceConfig) -> Detections:
+	def predict(self, task: InferenceTask) -> Detections:
 		"""
-		Performs inference on a single frame.
+		Performs inference on a single task.
 
 		Args:
-		    frame (np.ndarray): The input image/frame as a NumPy array.
-		    infer_config (InferenceConfig): Configuration for the inference process.
+		    task (InferenceTask): An object containing the frame and inference config.
 
 		Returns:
 		    Detections: A structured object containing all detected items.
 		"""
+		frame: Frame = task.frame
+		infer_config: InferenceConfig = task.config
+
 		raw_results = self.model(
 			frame,
 			conf=infer_config.confidence_threshold,
@@ -53,7 +55,7 @@ class InferenceEngine:
 
 		return Detections.from_ultralytics(raw_results[0])
 
-	def draw_detections(self, frame: Frame, detections: Detections) -> Frame:
+	def get_annotated_frame(self, frame: Frame, detections: Detections) -> Frame:
 		"""
 		Draws bounding boxes and labels on the frame.
 
