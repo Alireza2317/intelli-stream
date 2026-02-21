@@ -1,0 +1,27 @@
+[project]
+name = "intelli-stream"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "customtkinter>=5.2.2",
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.13.1",
+    "torch==2.10.0+cpu",
+    "ultralytics>=8.4.14",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+]
+
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+default = true
+
+# pytorch-cpu url
+[[tool.uv.index]]
+url = "https://download.pytorch.org/whl/cpu"
