@@ -1,11 +1,9 @@
 import cv2
-import numpy as np
 from ultralytics.models import YOLO
 
 from src.config.config import InferenceConfig, ModelConfig
 from src.core.schemas import Detections
-
-type Frame = np.ndarray
+from src.core.types import Frame
 
 
 class InferenceEngine:
