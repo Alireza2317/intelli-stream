@@ -13,9 +13,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = [
-    "mypy>=1.19.1",
-]
+dev = ["mypy>=1.19.1"]
 
 
 [[tool.uv.index]]

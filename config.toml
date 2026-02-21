@@ -1,0 +1,31 @@
+# Intelli-Stream Application Configuration
+
+[model]
+# Default model for inference.
+# Options: yolov8n.pt, yolov8s.pt, etc.
+name = "yolov8n.pt"
+
+# Optional path to a custom model file.
+# path = "/path/to/your/model.pt"
+
+# Quantized model for efficiency mode.
+# quantized_name = "yolov8n-int8.tflite"
+
+[real_time_mode]
+# Settings for high-performance machines.
+confidence_threshold = 0.5
+iou_threshold = 0.4
+resolution = [720, 1280]   # [height, width]
+frame_skip = 0
+
+[efficiency_mode]
+# Settings for low-power devices like Raspberry Pi.
+confidence_threshold = 0.4
+iou_threshold = 0.4
+resolution = [320, 320]    # [height, width]
+frame_skip = 5
+
+# --- Optional Overrides ---
+# You can override these values with environment variables.
+# For example, to use an RTSP camera stream:
+# export APP_RTSP_URL="rtsp://user:pass@ip_address/stream"
