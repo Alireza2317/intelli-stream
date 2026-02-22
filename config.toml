@@ -25,7 +25,17 @@ iou_threshold = 0.4
 resolution = [320, 320]    # [height, width]
 frame_skip = 5
 
-# --- Optional Overrides ---
-# You can override these values with environment variables.
-# For example, to use an RTSP camera stream:
-# export APP_RTSP_URL="rtsp://user:pass@ip_address/stream"
+[camera]
+# Type of camera source. Options: "usb", "rtsp".
+source_type = "usb"
+
+# --- USB Camera Settings ---
+device_id = 0
+# Resolution for USB camera capture.
+resolution = [720, 1280] # [height, width]
+
+# --- RTSP Camera Settings ---
+# Transport protocol. "tcp" is more reliable over Wi-Fi, "udp" can be lower latency.
+rtsp_transport = "tcp"
+# Timeout in seconds for initial camera connection attempts.
+connection_timeout = 10

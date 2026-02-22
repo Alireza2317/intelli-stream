@@ -1,7 +1,14 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from pydantic import BaseModel, Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import (
+	BaseSettings,
+	PydanticBaseSettingsSource,
+	SettingsConfigDict,
+	TomlConfigSettingsSource,
+)
 
 
 class ModelConfig(BaseModel):
@@ -57,6 +64,25 @@ class EfficiencyConfig(InferenceConfig):
 	confidence_threshold: float = 0.4
 
 
+class CameraConfig(BaseModel):
+	"""Configuration for camera sources."""
+
+	source_type: str = Field(
+		default="usb", description='Type of camera source. Options: "usb", "rtsp".'
+	)
+	device_id: int = Field(default=0, description="Device ID for USB camera.")
+	resolution: tuple[int, int] = Field(
+		default=(720, 1280),
+		description="Capture resolution [height, width] for USB camera.",
+	)
+	rtsp_transport: str = Field(
+		default="tcp", description="Transport protocol for RTSP: 'tcp' or 'udp'."
+	)
+	connection_timeout: int = Field(
+		default=10, description="Timeout in seconds for camera connection."
+	)
+
+
 # Main Application Settings
 class AppConfig(BaseSettings):
 	"""
@@ -65,16 +91,34 @@ class AppConfig(BaseSettings):
 	Allows overriding with environment variables.
 	"""
 
-	model_config = SettingsConfigDict(
-		env_prefix="APP_", env_nested_delimiter="__", toml_file="config.toml"
-	)
+	model_config = SettingsConfigDict(env_prefix="APP_", env_nested_delimiter="__")
 
 	model: ModelConfig = Field(default_factory=ModelConfig)
 	real_time_mode: InferenceConfig = Field(default_factory=RealTimeConfig)
 	efficiency_mode: InferenceConfig = Field(default_factory=EfficiencyConfig)
+	camera: CameraConfig = Field(default_factory=CameraConfig)
 	rtsp_url: str | None = Field(
 		default=None, description="RTSP URL for IP camera streams."
 	)
+
+	@classmethod
+	def settings_customise_sources(
+		cls,
+		settings_cls: type[BaseSettings],
+		init_settings: PydanticBaseSettingsSource,
+		env_settings: PydanticBaseSettingsSource,
+		dotenv_settings: PydanticBaseSettingsSource,
+		file_secret_settings: PydanticBaseSettingsSource,
+	) -> tuple[PydanticBaseSettingsSource, ...]:
+		return (
+			TomlConfigSettingsSource(
+				settings_cls=settings_cls, toml_file="config.toml"
+			),
+			init_settings,
+			env_settings,
+			dotenv_settings,
+			file_secret_settings,
+		)
 
 
 # Create a single, project-wide instance of the settings.
